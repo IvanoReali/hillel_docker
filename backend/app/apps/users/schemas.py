@@ -1,4 +1,3 @@
-from pydantic import BaseModel, Field, EmailStr, ConfigDict
 from pydantic import BaseModel, EmailStr, ConfigDict
 
 
