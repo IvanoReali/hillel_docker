@@ -1,7 +1,6 @@
 from datetime import datetime
 from sqlalchemy.orm import DeclarativeBase, Mapped, mapped_column, declared_attr
 from sqlalchemy.sql import func
-from sqlalchemy.ext.asyncio import AsyncAttrs
 from sqlalchemy.ext.asyncio import AsyncAttrs, create_async_engine, async_sessionmaker, AsyncSession
 
 from settings import settings
@@ -16,6 +15,7 @@ class Base(AsyncAttrs, DeclarativeBase):
     @declared_attr.directive
     def __tablename__(cls) -> str:
         return cls.__name__.lower() + "s"
+
 
 engine = create_async_engine(
     settings.DATABASE_URL,
