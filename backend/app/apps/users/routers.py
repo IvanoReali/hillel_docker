@@ -1,4 +1,4 @@
-from fastapi import APIRouter, status, Depends, HTTPException
+from fastapi import APIRouter, status, Depends, HTTPException, Header
 
 from apps.auth.auth_handler import auth_handler
 from apps.auth.password_handler import PasswordHandler
@@ -40,9 +40,16 @@ async def user_login(
     if not is_valid_password:
         raise HTTPException(detail=f'Incorrect password',
                             status_code=status.HTTP_400_BAD_REQUEST)
-
     tokens = await auth_handler.get_token_pairs(user)
     return tokens
+
+
+@users_router.post('/refresh')
+async def get_token_pairs_by_refresh_token(
+    refresh_token: str = Header(alias="X-Refresh-Token"),
+    session: AsyncSession = Depends(get_async_session)
+):
+    return await auth_handler.get_token_pairs_by_refresh_token(refresh_token, session)
 
 
 @users_router.get("/my-info")
