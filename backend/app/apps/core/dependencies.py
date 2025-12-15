@@ -4,25 +4,22 @@ from typing import AsyncGenerator
 from sqlalchemy.ext.asyncio import AsyncSession
 from fastapi import Depends, HTTPException, status
 from fastapi.security import OAuth2PasswordBearer
-
 from apps.users.crud import user_manager
 from apps.users.models import User
-
-
 class SecurityHandler:
     oauth2_schema = OAuth2PasswordBearer(tokenUrl="/users/login")
-
-
 async def get_async_session() -> AsyncGenerator[AsyncSession, None]:
     async with async_session_maker() as session:
         yield session
-
-
 async def get_current_user(
         token: str = Depends(SecurityHandler.oauth2_schema),
         session: AsyncSession = Depends(get_async_session)
 ) -> User:
     payload = await auth_handler.decode_token(token)
+
+    refresh_token_key = payload.get("key")
+    if refresh_token_key:
+        raise HTTPException(detail=f'We accept only access tokens, but refresh was provided', status_code=status.HTTP_401_UNAUTHORIZED)
 
     user: User = await user_manager.get(session=session, model_field=User.email, value=payload['sub'])
     if not user:
