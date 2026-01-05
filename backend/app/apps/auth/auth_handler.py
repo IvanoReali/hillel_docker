@@ -8,7 +8,7 @@ import jwt
 
 from apps.users.crud import user_manager
 from apps.users.models import User
-from services.redis_service import redis_service
+from apps.services.redis_service import redis_service
 from settings import settings
 
 
